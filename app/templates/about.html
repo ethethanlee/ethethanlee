@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+        <title>EthanPoster</title>
+    </head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <br>
+        <h1>{% block title %} Collaborative Ethan Poster {% endblock %}</h1>
+        <!-- <br> -->
+        <body>
+        Welcome! I thought that it would be cool to host my own website that, rather than just putting my own stuff, lets others also share photos of me or whatever they feel like! To post, contact me to ask for they key to post! Happy posting!
+        </body>
+        <br>
+        <body>
+            Anyways, here is the Astronomy Picture of the Day:
+        </body>
+        <br>
+        <br>
+        <center><img src={{data}} width=1100></center>
+        
+    {% endblock %}
+</body>
+
+</html>
