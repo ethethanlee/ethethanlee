@@ -67,7 +67,7 @@ def create():
         title = request.form['title']
         content = request.form['content']
 
-        author = request.form["author"]
+        # author = request.form["author"]
 
         if not title:
             flash('Title is required!')
