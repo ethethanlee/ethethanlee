@@ -1,4 +1,5 @@
 import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 from flask import (
     Flask,
     render_template,
@@ -12,12 +13,17 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from db import db_init, db
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 app.secret_key = "secret-key"
 
 API_KEY=os.getenv("API_KEY")
 app.config['SECRET_KEY'] = 'ethethanlee'
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db_init(app)
 
 # def image_handler(tag,specific_element,requested_url):
 #     image_paths = []
@@ -66,6 +72,9 @@ def create():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
+        # pic = request.files['pic']
+        # if not pic:
+        #     return 'No pic uploaded!', 400
 
         # author = request.form["author"]
 
