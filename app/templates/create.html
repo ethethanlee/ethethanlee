@@ -10,11 +10,22 @@
                placeholder="Post title" class="form-control"
                value="{{ request.form['title'] }}"></input>
     </div>
+    <!-- <div class="form-group">
+        <label for="author">Author</label>
+        <input type="text" name="author"
+               placeholder="Post author" class="form-control"
+               value="{{ request.form['author'] }}"></input>
+    </div> -->
+    <div class="form-group">
+        <label for="title">Upload</label> <br>
+        <input type="file" name="pic" />
+        <!-- <input type="submit" value="Upload a file"/> -->
+    </div>
 
     <div class="form-group">
-        <label for="content">Content</label>
-        <textarea name="content" placeholder="Post content"
-                  class="form-control">{{ request.form['content'] }}</textarea>
+        <label for="caption">Caption</label>
+        <textarea name="caption" placeholder="Post caption"
+                  class="form-control">{{ request.form['caption'] }}</textarea>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Submit</button>

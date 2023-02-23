@@ -9,11 +9,14 @@ from flask import (
     redirect
 )
 from werkzeug.exceptions import abort
+from werkzeug.utils import secure_filename
+from models import Img
 import requests
 import json
 import os
 from dotenv import load_dotenv
 from db import db_init, db
+import sys
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 app.secret_key = "secret-key"
@@ -25,21 +28,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db_init(app)
 
-# def image_handler(tag,specific_element,requested_url):
-#     image_paths = []
-
-#     if tag == 'img':
-#         images = [img['src'] for img in specific_element]
-#         for i in specific_element:
-#             image_path = i.attrs['src']
-#             valid_imgpath = validators.url(image_path)
-#             if valid_imgpath == True:
-#                 full_path = image_path
-#             else:
-#                 full_path = urljoin(requested_url, image_path)
-#                 image_paths.append(full_path)
-
-#     return image_paths
 def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
@@ -71,19 +59,25 @@ def post(post_id):
 def create():
     if request.method == 'POST':
         title = request.form['title']
-        content = request.form['content']
-        # pic = request.files['pic']
-        # if not pic:
-        #     return 'No pic uploaded!', 400
-
+        caption = request.form['caption']
         # author = request.form["author"]
-
+        pic = request.files['pic']
         if not title:
             flash('Title is required!')
+        elif not pic:
+            flash('Pic is required!')
         else:
+            filename = secure_filename(pic.filename)
+            mimetype = pic.mimetype
+            if not filename or not mimetype:
+                return 'Bad upload!', 400
+            img = Img(img=pic.read(), name=filename, mimetype=mimetype)
+            db.session.add(img)
+            db.session.commit()
+
             conn = get_db_connection()
-            conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)',
-                         (title, content))
+            conn.execute('INSERT INTO posts (title, caption) VALUES (?, ?)',
+                         (title, caption))
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
@@ -95,15 +89,15 @@ def edit(id):
 
     if request.method == 'POST':
         title = request.form['title']
-        content = request.form['content']
+        caption = request.form['caption']
 
         if not title:
             flash('Title is required!')
         else:
             conn = get_db_connection()
-            conn.execute('UPDATE posts SET title = ?, content = ?'
+            conn.execute('UPDATE posts SET title = ?, caption = ?'
                          ' WHERE id = ?',
-                         (title, content, id))
+                         (title, caption, id))
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
@@ -128,10 +122,6 @@ def about():
     data = json.loads(req.content)
     img_url=data['url']
     img=requests.get(img_url)
-    # if img.status_code==200:
-    #     with open(img_url, 'wb') as f:
-    #         f.write(img.content)
-    # return f
     return render_template('about.html', data=img_url) #second data
 
 @app.route('/contact')
@@ -144,3 +134,18 @@ def contact():
 # @app.route("/download",methods=("GET", "POST"), strict_slashes=False)
 # def downloader():
 #
+# def image_handler(tag,specific_element,requested_url):
+#     image_paths = []
+
+#     if tag == 'img':
+#         images = [img['src'] for img in specific_element]
+#         for i in specific_element:
+#             image_path = i.attrs['src']
+#             valid_imgpath = validators.url(image_path)
+#             if valid_imgpath == True:
+#                 full_path = image_path
+#             else:
+#                 full_path = urljoin(requested_url, image_path)
+#                 image_paths.append(full_path)
+
+#     return image_paths
