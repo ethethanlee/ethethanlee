@@ -11,7 +11,7 @@
     {% block content %}
     <br>
         <h1>{% block title %} Collaborative Ethan Poster {% endblock %}</h1>
-        <!-- <br> -->
+         <br> 
         {% for post in posts %}
             <a href="{{ url_for('post', post_id=post['id']) }}">
                 <h2>{{ post['title'] }}</h2>

@@ -1,5 +1,4 @@
 import sqlite3
-from flask_sqlalchemy import SQLAlchemy
 from flask import (
     Flask,
     render_template,
@@ -10,23 +9,26 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
-from models import Img
 import requests
 import json
 import os
 from dotenv import load_dotenv
-from db import db_init, db
-import sys
 
-app = Flask(__name__, static_url_path='', static_folder='frontend/build')
+app = Flask(__name__, static_url_path='')
 app.secret_key = "secret-key"
 
 API_KEY=os.getenv("API_KEY")
 app.config['SECRET_KEY'] = 'ethethanlee'
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db_init(app)
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -53,7 +55,10 @@ def index():
 @app.route('/<int:post_id>')
 def post(post_id):
     post = get_post(post_id)
-    return render_template('post.html', post=post)
+    raw_img = [filename for filename in os.listdir('./static/uploads/') if filename.startswith(str(post_id)+"-")][0]
+    img_path = "../" + os.path.join(app.config['UPLOAD_FOLDER'], raw_img)
+    return render_template('post.html', user_image=img_path, post=post)
+
 
 @app.route('/create', methods=('GET', 'POST'))
 def create():
@@ -67,19 +72,22 @@ def create():
         elif not pic:
             flash('Pic is required!')
         else:
-            filename = secure_filename(pic.filename)
-            mimetype = pic.mimetype
-            if not filename or not mimetype:
-                return 'Bad upload!', 400
-            img = Img(img=pic.read(), name=filename, mimetype=mimetype)
-            db.session.add(img)
-            db.session.commit()
-
+            
             conn = get_db_connection()
-            conn.execute('INSERT INTO posts (title, caption) VALUES (?, ?)',
+            cursor_used = conn.execute('INSERT INTO posts (title, caption) VALUES (?, ?)',
                          (title, caption))
+            inserted_id = cursor_used.lastrowid
             conn.commit()
             conn.close()
+
+            if pic.filename == '':
+                flash('No image selected for uploading')
+                return redirect(request.url)
+            if pic and allowed_file(pic.filename):
+                # ans
+                img_filename = str(inserted_id) + "-" + secure_filename(pic.filename)
+                pic.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
+            
             return redirect(url_for('index'))
     return render_template('create.html')
 
@@ -128,24 +136,7 @@ def about():
 def contact():
     return render_template('contact.html')
 
-   
 
+if __name__ == "__main__":
+    app.run()
 
-# @app.route("/download",methods=("GET", "POST"), strict_slashes=False)
-# def downloader():
-#
-# def image_handler(tag,specific_element,requested_url):
-#     image_paths = []
-
-#     if tag == 'img':
-#         images = [img['src'] for img in specific_element]
-#         for i in specific_element:
-#             image_path = i.attrs['src']
-#             valid_imgpath = validators.url(image_path)
-#             if valid_imgpath == True:
-#                 full_path = image_path
-#             else:
-#                 full_path = urljoin(requested_url, image_path)
-#                 image_paths.append(full_path)
-
-#     return image_paths
