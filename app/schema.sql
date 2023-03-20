@@ -4,5 +4,8 @@ CREATE TABLE posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title TEXT NOT NULL,
-    caption TEXT NOT NULL
+    caption TEXT NOT NULL,
+    author TEXT NOT NULL,
+    edited TEXT NOT NULL,
+    author_key TEXT NOT NULL
 );

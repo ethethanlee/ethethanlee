@@ -13,14 +13,16 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+import sys
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='', static_folder='./')
 app.secret_key = "secret-key"
 
 API_KEY=os.getenv("API_KEY")
 app.config['SECRET_KEY'] = 'ethethanlee'
+PASSWORD_KEY=os.getenv("PASSWORD_KEY")
 
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
+UPLOAD_FOLDER = os.path.join('Static', 'uploads')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -49,14 +51,19 @@ def get_post(post_id):
 def index():
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM posts').fetchall()
+    img_paths=[]
+    for i in range(len(posts)):
+        raw_img = [filename for filename in os.listdir('./Static/uploads/') if filename.startswith(str(i+1)+"-")][0]
+        img_paths.append(os.path.join(app.config['UPLOAD_FOLDER'], raw_img))
     conn.close()
-    return render_template('index.html', posts=posts)
+    return render_template('index.html', posts=posts, img_data=img_paths)
 
 @app.route('/<int:post_id>')
 def post(post_id):
     post = get_post(post_id)
-    raw_img = [filename for filename in os.listdir('./static/uploads/') if filename.startswith(str(post_id)+"-")][0]
-    img_path = "../" + os.path.join(app.config['UPLOAD_FOLDER'], raw_img)
+    raw_img = [filename for filename in os.listdir('./Static/uploads/') if filename.startswith(str(post_id)+"-")][0]
+    img_path = os.path.join(app.config['UPLOAD_FOLDER'], raw_img)
+
     return render_template('post.html', user_image=img_path, post=post)
 
 
@@ -65,17 +72,22 @@ def create():
     if request.method == 'POST':
         title = request.form['title']
         caption = request.form['caption']
-        # author = request.form["author"]
+        author = request.form['author']
         pic = request.files['pic']
+        key = request.form['key']
+        edited = ''
+        author_key = request.form['author_key']
         if not title:
             flash('Title is required!')
         elif not pic:
             flash('Pic is required!')
+        elif key != PASSWORD_KEY:
+            flash('Correct password key is required!')
         else:
             
             conn = get_db_connection()
-            cursor_used = conn.execute('INSERT INTO posts (title, caption) VALUES (?, ?)',
-                         (title, caption))
+            cursor_used = conn.execute('INSERT INTO posts (title, caption, author, edited, author_key) VALUES (?, ?, ?, ?, ?)',
+                         (title, caption, author, edited, author_key))
             inserted_id = cursor_used.lastrowid
             conn.commit()
             conn.close()
@@ -98,14 +110,18 @@ def edit(id):
     if request.method == 'POST':
         title = request.form['title']
         caption = request.form['caption']
-
-        if not title:
+        author_key = request.form['author_key']
+        # need to make thing for edited !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if author_key != post['author_key']:
+            flash('Wrong author key!')
+        elif not title:
             flash('Title is required!')
         else:
+            edited = '(edited)'
             conn = get_db_connection()
-            conn.execute('UPDATE posts SET title = ?, caption = ?'
+            conn.execute('UPDATE posts SET title = ?, caption = ?, edited = ?' 
                          ' WHERE id = ?',
-                         (title, caption, id))
+                         (title, caption, edited, id))
             conn.commit()
             conn.close()
             return redirect(url_for('index'))

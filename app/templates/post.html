@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+</br>
     <h2>{% block title %} {{ post['title'] }} {% endblock %}</h2>
     <span class="badge badge-primary">{{ post['created'] }}</span>
     <a href="{{ url_for('edit', id=post['id']) }}">
         <span class="badge badge-warning">Edit</span>
-    </a> </br>
-    {{user_image}}
+    </a> 
+    by {{post['author']}} 
+    <span style="font-size:7px">{{post['edited']}}</span>
+    </br> </br>
     <img src={{user_image}} width="500">
     <p>{{ post['caption'] }}</p>
 {% endblock %}

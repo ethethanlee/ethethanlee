@@ -10,12 +10,12 @@
                placeholder="Post title" class="form-control"
                value="{{ request.form['title'] }}"></input>
     </div>
-    <!-- <div class="form-group">
+    <div class="form-group">
         <label for="author">Author</label>
         <input type="text" name="author"
                placeholder="Post author" class="form-control"
                value="{{ request.form['author'] }}"></input>
-    </div> -->
+    </div>
     <div class="form-group">
         <label for="title">Upload</label> <br>
         <input type="file" name="pic" />
@@ -27,6 +27,21 @@
         <textarea name="caption" placeholder="Post caption"
                   class="form-control">{{ request.form['caption'] }}</textarea>
     </div>
+
+    <div class="form-group">
+        <label for="key">Key</label>
+        <input type="text" name="key"
+               placeholder="Post key" class="form-control"
+               value="{{ request.form['key'] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="author_key">Author Key</label>
+        <input type="text" name="author_key"
+               placeholder="Password for editing your post later" class="form-control"
+               value="{{ request.form['author_key'] }}"></input>
+    </div>
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>

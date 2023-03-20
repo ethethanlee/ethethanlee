@@ -12,7 +12,7 @@
     <br>
         <h1>{% block title %} Collaborative Ethan Poster {% endblock %}</h1>
          <br> 
-        {% for post in posts %}
+        {% for post in posts|reverse %}
             <a href="{{ url_for('post', post_id=post['id']) }}">
                 <h2>{{ post['title'] }}</h2>
             </a>
@@ -20,9 +20,16 @@
             <a href="{{ url_for('edit', id=post['id']) }}">
                 <span class="badge badge-warning">Edit</span>
             </a>
+            by {{post['author']}} 
+            <span style="font-size:7px">{{post['edited']}}</span> 
+        </br></br>
+            <img src={{ img_data.pop() }} height="300">
+            <p>{{ post['caption'] }}</p>
             <hr>
         {% endfor %}
     {% endblock %}
 </body>
 
 </html>
+
+img_data

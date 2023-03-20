@@ -1,7 +1,7 @@
 import sqlite3
 
 import os, shutil
-folder = './static/uploads'
+folder = './Static/uploads'
 for filename in os.listdir(folder):
     file_path = os.path.join(folder, filename)
     try:
