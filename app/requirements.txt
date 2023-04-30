@@ -34,7 +34,6 @@ google-auth==2.8.0
 google-auth-oauthlib==0.4.6
 graphviz==0.20.1
 grpcio==1.47.0
-h5py==3.7.0
 hydra-core==1.2.0
 idna==3.3
 importlib-metadata==4.12.0
@@ -72,12 +71,8 @@ nest-asyncio==1.5.1
 netifaces==0.11.0
 networkx==3.1
 notebook==6.4.0
-numpy==1.22.3
 oauthlib==3.2.0
 omegaconf==2.2.2
-openapi==1.1.0
-opencv-contrib-python==4.6.0.66
-opencv-python==4.5.5.64
 packaging==21.0
 pandas==1.4.1
 pandocfilters==1.4.3
@@ -228,7 +223,6 @@ pyobjc-framework-VideoToolbox==8.5
 pyobjc-framework-Virtualization==8.5
 pyobjc-framework-Vision==8.5
 pyobjc-framework-WebKit==8.5
-pyovpn-as==0.0.7
 pyparsing==2.4.7
 pyrsistent==0.18.0
 python-dateutil==2.8.2
@@ -236,7 +230,6 @@ python-dotenv==0.20.0
 pytorch-lightning==1.6.4
 pytz==2022.1
 pyusb==1.2.1
-pyvpn==1.2
 PyYAML==6.0
 pyzmq==22.1.0
 qtconsole==5.1.1
@@ -260,9 +253,6 @@ tensorboard-plugin-wit==1.8.1
 terminado==0.10.1
 testpath==0.5.0
 tomli==2.0.1
-torch==1.12.0
-torchmetrics==0.9.1
-torchvision==0.13.0
 tornado==6.1
 tqdm==4.64.0
 traitlets==5.0.5
