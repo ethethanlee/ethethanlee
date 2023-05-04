@@ -1,4 +1,4 @@
-#!/Users/ethanlee/Developer/NAStagram/venv/bin/python
+#!/Users/ethanlee/Developer/ethethanlee/app/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

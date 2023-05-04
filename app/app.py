@@ -13,7 +13,7 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
-import sys
+# import sys
 
 app = Flask(__name__, static_url_path='', static_folder='./')
 app.secret_key = "secret-key"
@@ -154,5 +154,5 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
 
